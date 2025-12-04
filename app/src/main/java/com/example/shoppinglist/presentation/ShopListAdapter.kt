@@ -5,18 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppinglist.R
 import com.example.shoppinglist.domen.ShopItem
 
-class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ShopItemViewholder>() {
-
-    var shopList = listOf<ShopItem>()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
+class ShopListAdapter: ListAdapter<ShopItem, ShopListAdapter.ShopItemViewholder>(
+    ShopItemDiffCallback()
+) {
 
     var onShopItemLongClickListner : ((shopItem: ShopItem) -> Unit)? = null
     var onShopItemClickListner : ((shopItem: ShopItem) -> Unit)? = null
@@ -42,7 +40,7 @@ class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ShopItemViewholder>(
         holder: ShopItemViewholder,
         position: Int
     ) {
-        val shopItem = shopList[position]
+        val shopItem = getItem(position)
         holder.tvText.text = shopItem.name
         holder.tvCount.text = shopItem.count.toString()
         holder.itemView.setOnLongClickListener {
@@ -55,16 +53,12 @@ class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ShopItemViewholder>(
     }
 
     override fun getItemViewType(position: Int): Int {
-        val shopItem = shopList[position]
+        val shopItem = getItem(position)
         return if (shopItem.enable){
             VIEW_ACTIVE
         }else{
             VIEW_NO_ACTIVE
         }
-    }
-
-    override fun getItemCount(): Int {
-        return shopList.size
     }
 
     class ShopItemViewholder(view: View): RecyclerView.ViewHolder(view){
