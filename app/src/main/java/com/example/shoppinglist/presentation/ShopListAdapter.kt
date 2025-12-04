@@ -12,13 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppinglist.R
 import com.example.shoppinglist.domen.ShopItem
 
-class ShopListAdapter: ListAdapter<ShopItem, ShopListAdapter.ShopItemViewholder>(
+class ShopListAdapter: ListAdapter<ShopItem, ShopItemViewholder>(
     ShopItemDiffCallback()
 ) {
 
     var onShopItemLongClickListner : ((shopItem: ShopItem) -> Unit)? = null
     var onShopItemClickListner : ((shopItem: ShopItem) -> Unit)? = null
-    var onShopItemSwipeListner : ((shopItem: ShopItem) -> Unit)? = null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -59,11 +58,6 @@ class ShopListAdapter: ListAdapter<ShopItem, ShopListAdapter.ShopItemViewholder>
         }else{
             VIEW_NO_ACTIVE
         }
-    }
-
-    class ShopItemViewholder(view: View): RecyclerView.ViewHolder(view){
-        val tvText = view.findViewById<TextView>(R.id.tv_name)
-        val tvCount = view.findViewById<TextView>(R.id.tv_count)
     }
 
     companion object{
