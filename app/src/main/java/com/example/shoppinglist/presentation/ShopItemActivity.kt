@@ -3,6 +3,8 @@ package com.example.shoppinglist.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -32,9 +34,14 @@ class ShopItemActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_shop_ite)
         parseIntent()
-        itemViews()
-        val mode = intent.getStringExtra("mode_extra")
         viewModel = ViewModelProvider(this).get(ShopItemViewModel::class.java)
+        itemViews()
+        addTextChangeListner()
+        launchRightMode()
+        observeViewModel()
+    }
+
+    fun launchRightMode(){
         when(screenMode){
             MODE_EDIT -> launchEditMode()
             MODE_ADD -> launchAddMode()
@@ -42,11 +49,86 @@ class ShopItemActivity : AppCompatActivity() {
     }
 
     fun launchEditMode(){
-//        viewModel.editShopItem(edName, edCount)
+        viewModel.getShopItem(shopItemId)
+        viewModel.shopItem.observe(this){
+            edName.setText(it.name)
+            edCount.setText(it.count.toString())
+        }
+        buttonSave.setOnClickListener {
+            viewModel.editShopItem(edName.text?.toString(), edCount.text?.toString())
+            val intent = MainActivity.newIntentShowItem(this)
+            startActivity(intent)
+        }
+    }
+
+    fun observeViewModel(){
+        viewModel.errorInputName.observe(this){
+            val message = if (it){
+                Log.d("ShopItemActivity", "Не введены данные")
+            }else{
+                null
+            }
+        }
+        viewModel.errorInputCount.observe(this){
+            val message = if (it){
+                Log.d("ShopItemActivity", "Не введены данные")
+            }else{
+                null
+            }
+        }
+    }
+
+    fun addTextChangeListner(){
+        edName.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(
+                p0: CharSequence?,
+                p1: Int,
+                p2: Int,
+                p3: Int
+            ) {
+                viewModel.resetErrorInputName()
+            }
+
+            override fun onTextChanged(
+                p0: CharSequence?,
+                p1: Int,
+                p2: Int,
+                p3: Int
+            ) {
+            }
+        })
+        edCount.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(
+                p0: CharSequence?,
+                p1: Int,
+                p2: Int,
+                p3: Int
+            ) {
+                viewModel.resetErrorInputCount()
+            }
+
+            override fun onTextChanged(
+                p0: CharSequence?,
+                p1: Int,
+                p2: Int,
+                p3: Int
+            ) {
+            }
+        })
     }
 
     fun launchAddMode(){
-
+        buttonSave.setOnClickListener {
+            viewModel.addShopItem(edName.text?.toString(), edCount.text?.toString())
+            val intent = MainActivity.newIntentShowItem(this)
+            startActivity(intent)
+        }
     }
 
     private fun itemViews(){
@@ -74,9 +156,9 @@ class ShopItemActivity : AppCompatActivity() {
         }
     }
     companion object{
-        const val EXTRA_SCREEN_MODE = "mode_extra"
-        const val MODE_ADD = "mode_extra"
-        const val MODE_EDIT = "mode_extra"
+        const val EXTRA_SCREEN_MODE = "extra_mode"
+        const val MODE_ADD = "mode_add"
+        const val MODE_EDIT = "mode_edit"
         const val EXTRA_SHOP_ITEM_ID = "extra_shop_item_id"
         const val MODE_UNKNOW = ""
 

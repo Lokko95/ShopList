@@ -1,5 +1,7 @@
 package com.example.shoppinglist.presentation
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -90,6 +92,15 @@ class MainActivity : AppCompatActivity() {
     private fun setupLongClickListner() {
         adapter.onShopItemLongClickListner = {
             viewModel.editShopList(it)
+        }
+    }
+
+    companion object{
+
+        fun newIntentShowItem(context: Context): Intent{
+            val intent = Intent(context, MainActivity::class.java)
+
+            return intent
         }
     }
 
