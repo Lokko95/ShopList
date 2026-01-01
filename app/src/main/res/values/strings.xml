@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Shopping List</string>
+    <string name="add_new_item">Add new item</string>
+    <string name="salfetki">Салфетки</string>
+    <string name="save">SAVE</string>
+    <string name="count">Count:</string>
+    <string name="name">Name:</string>
 </resources>
